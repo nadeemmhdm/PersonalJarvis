@@ -102,7 +102,7 @@ class LocalOpenAIBrain:
             # Root convention (same as the Ollama card): the stored value is
             # the SERVER root; ``/v1`` is appended here, and a pasted ``…/v1``
             # is normalized away instead of doubling up.
-            self._server_root = normalize_server_root(ep.base_url)
+            self._server_root = normalize_server_root(ep.base_url)\n            from jarvis.privacy.local_only import assert_local_endpoint\n            assert_local_endpoint(self._server_root)
             # Optional key: a team-proxy token wins, else the user's optional
             # local key, else a placeholder the server ignores.
             self._credential = ep.credential or cfg.get_secret(
