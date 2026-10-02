@@ -43,8 +43,13 @@ class BrainProviderRegistry:
         return dict(self._failed)
 
     def instantiate(self, name: str, **kwargs: Any) -> Brain:
-        """Instantiates the provider with kwargs."""
+        """Instantiate a provider, enforcing the private profile before construction."""
         self._load()
+        from jarvis.privacy.local_only import LocalOnlyViolation, is_local_only
+        if is_local_only() and name not in {"ollama", "local-openai"}:
+            raise LocalOnlyViolation(
+                f"Local-only mode refuses brain provider {name!r}; use local-openai/llama.cpp or Ollama."
+            )
         if name not in self._classes:
             raise KeyError(
                 f"Brain provider '{name}' not found. Available: {self.available()}. "
