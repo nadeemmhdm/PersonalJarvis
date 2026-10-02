@@ -20,7 +20,7 @@ import {
 import { PaneResizer } from "@/components/layout/PaneResizer";
 import { useResizablePane } from "@/hooks/useResizablePane";
 import { TopBar } from "@/components/layout/TopBar";
-import { PermissionsAlertBanner } from "@/components/layout/PermissionsAlertBanner";
+import { PermissionsAlertBanner } from "@/components/layout/PermissionsAlertBanner";\nimport { UpdateAnnouncement } from "@/components/layout/UpdateAnnouncement";
 import { ReadyCelebration } from "@/components/ReadyCelebration";
 import { InputIsolationBanner } from "@/components/layout/InputIsolationBanner";
 import { VoiceWarmingBanner } from "@/components/layout/VoiceWarmingBanner";
@@ -400,7 +400,7 @@ export default function App() {
         <div className={activeSection === "agents" ? "flex min-h-0 min-w-0 flex-1 flex-col" : "jarvis-sheet flex min-h-0 min-w-0 flex-1 flex-col"}>
         {/* App-wide macOS permission alert — topmost so a missing grant is
             impossible to miss on any view. No-op on other platforms. */}
-        <PermissionsAlertBanner />
+        <UpdateAnnouncement />\n        <PermissionsAlertBanner />
         {/* Outside input software (dictation, text expanders, auto-type) cannot
             reach an elevated window. Sits next to the permission alert because
             it is the same class of problem: an OS-level gate the user must be
