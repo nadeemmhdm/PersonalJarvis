@@ -284,8 +284,7 @@ class HttpxAssetFetcher:
     touches at startup (AP-26).
     """
 
-    async def get_text(self, url: str, *, max_bytes: int) -> str:
-        import httpx
+    async def get_text(self, url: str, *, max_bytes: int) -> str:\n        import httpx\n        from jarvis.privacy.local_only import assert_outbound_allowed\n        assert_outbound_allowed(url, purpose="signed_update")
 
         async with httpx.AsyncClient(
             timeout=httpx.Timeout(READ_TIMEOUT_S, connect=CONNECT_TIMEOUT_S),
@@ -307,10 +306,7 @@ class HttpxAssetFetcher:
         *,
         max_bytes: int,
         on_progress: DownloadProgress | None = None,
-    ) -> int:
-        import httpx
-
-        written = 0
+    ) -> int:\n        import httpx\n        from jarvis.privacy.local_only import assert_outbound_allowed\n        assert_outbound_allowed(url, purpose="signed_update")\n\n        written = 0
         async with httpx.AsyncClient(
             timeout=httpx.Timeout(READ_TIMEOUT_S, connect=CONNECT_TIMEOUT_S),
             follow_redirects=True,

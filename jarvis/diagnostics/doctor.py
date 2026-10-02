@@ -343,6 +343,20 @@ def check_macos_spotlight() -> list[DoctorFinding]:
     return [DoctorFinding("macos-spotlight", "ok", f"Spotlight finds {bundle.name}")]
 
 
+def check_local_privacy(config: Any) -> list[DoctorFinding]:
+    """Verify that the selected brain cannot exfiltrate prompts in local-only mode."""
+    from jarvis.privacy.local_only import is_local_only
+    if not is_local_only():
+        return [DoctorFinding("local-privacy", "warn", "local-only privacy mode is disabled")]
+    primary = str(getattr(getattr(config, "brain", None), "primary", "") or "")
+    if primary and primary not in {"ollama", "local-openai"}:
+        return [DoctorFinding("local-privacy", "fail",
+            f"local-only mode is enabled but primary provider is {primary!r}",
+            hint="Select local-openai (llama.cpp) or Ollama before using the assistant.")]
+    return [DoctorFinding("local-privacy", "ok",
+        "local-only policy active; runtime brain traffic is restricted to loopback")]
+
+
 def run_doctor(config: Any) -> list[DoctorFinding]:
     """Run every completeness check and return a flat, ordered finding list.
 
@@ -351,7 +365,7 @@ def run_doctor(config: Any) -> list[DoctorFinding]:
     """
     findings: list[DoctorFinding] = []
     checks: tuple[tuple[str, Any], ...] = (
-        ("router-tools", lambda: check_router_tools()),
+        ("local-privacy", lambda: check_local_privacy(config)),\n        ("router-tools", lambda: check_router_tools()),
         ("harness-config", lambda: check_harness_config(config)),
         ("subagent-backend", lambda: check_subagent_backend()),
         ("brain-provider", lambda: check_brain_provider(config)),

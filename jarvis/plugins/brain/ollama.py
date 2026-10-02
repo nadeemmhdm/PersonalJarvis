@@ -184,7 +184,7 @@ class OllamaBrain:
             # Root convention: the stored/resolved value is the SERVER root;
             # ``/v1`` (chat) and ``/api/*`` (discovery) are appended here. A
             # team-proxy target (``…/p/ollama``) follows the same convention.
-            self._server_root = normalize_server_root(ep.base_url or default_server_root())
+            self._server_root = normalize_server_root(ep.base_url or default_server_root())\n            from jarvis.privacy.local_only import assert_local_endpoint\n            assert_local_endpoint(self._server_root)
             self._credential = ep.credential
         return self._server_root
 

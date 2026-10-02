@@ -1272,6 +1272,30 @@ def _apply_autostart_choice(enabled: bool) -> None:
         _println(f"⚠  Autostart setup failed (you can toggle it later in Settings): {exc}")
 
 
+def step_personal_ai_identity() -> None:
+    """Collect only the minimum local identity/preferences needed by the assistant."""
+    from jarvis.core import config as cfg_mod
+    from jarvis.core import config_writer
+    from jarvis.setup.personalization import build_personalization, save_personalization
+
+    _println(" Step — Personal AI")
+    assistant = _ask("Assistant name", default="Assistant")
+    owner = _ask("What should the assistant call you?", default="User")
+    wake = _ask("Wake phrase", default=f"Hey {assistant}")
+    languages_raw = _ask("Languages (comma separated)", default="ml,en")
+    style = _ask("Response style", default="Malayalam/Manglish")
+    profile = build_personalization(
+        assistant_name=assistant,
+        owner_address=owner,
+        wake_phrase=wake,
+        languages=tuple(x.strip() for x in languages_raw.split(",") if x.strip()),
+        response_style=style,
+    )
+    save_personalization(profile, cfg_mod.DATA_DIR)
+    config_writer.set_wake_word(profile.wake_phrase, engine="auto")
+    os.environ["JARVIS_LOCAL_ONLY"] = "1"
+    _println(f"→ {profile.assistant_name} configured. Personalization is stored locally.")
+
 # ----------------------------------------------------------------------
 # Orchestrator
 # ----------------------------------------------------------------------
@@ -1306,7 +1330,11 @@ def run() -> int:
 
     try:
         step_hardware_check()
-        step_api_keys()
+        step_personal_ai_identity()
+        if os.environ.get("JARVIS_LOCAL_ONLY", "1").strip().lower() not in {"1", "true", "yes", "on"}:
+            step_api_keys()
+        else:
+            _println("→ Local-only privacy mode enabled; cloud API-key setup skipped.")
         step_mic_check()
         new_hotkey = step_hotkey_check(default_hotkey="ctrl+right_alt+j")
         if new_hotkey != "ctrl+right_alt+j":

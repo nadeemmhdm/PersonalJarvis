@@ -424,9 +424,7 @@ async def _fetch_latest_release() -> dict[str, Any] | None:
     """
     global _last_good_release
     try:
-        import httpx
-
-        async with httpx.AsyncClient(timeout=_NETWORK_TIMEOUT_S) as client:
+        import httpx\n        from jarvis.privacy.local_only import assert_outbound_allowed\n        assert_outbound_allowed(_RELEASES_LATEST_API, purpose="signed_update")\n\n        async with httpx.AsyncClient(timeout=_NETWORK_TIMEOUT_S) as client:
             resp = await client.get(
                 _RELEASES_LATEST_API,
                 headers={
